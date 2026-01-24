@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_ci_cd_flavors/app/core/config/app_flavor.dart';
 import 'package:flutter_ci_cd_flavors/app/core/config/app_runtime.dart';
