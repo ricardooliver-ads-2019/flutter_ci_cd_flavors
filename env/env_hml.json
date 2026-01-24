@@ -1,0 +1,6 @@
+{
+  "ENVIRONMENT": "hml",
+  "APP_NAME": "My App (HML)",
+  "API_BASE_URL": "https://api-hml.meuapp.com",
+  "DEBUG_MENU": true
+}

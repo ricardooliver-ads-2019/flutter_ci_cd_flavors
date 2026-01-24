@@ -37,6 +37,20 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    flavorDimensions += "env"
+
+    productFlavors {
+        create("hml") {
+            dimension = "env"
+            applicationIdSuffix = ".hml"
+            resValue("string", "app_name", "My App (HML)")
+        }
+        create("prod") {
+            dimension = "env"
+            resValue("string", "app_name", "My App")
+        }
+    }
 }
 
 flutter {
