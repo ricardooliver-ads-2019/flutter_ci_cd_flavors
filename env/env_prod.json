@@ -1,0 +1,6 @@
+{
+  "ENVIRONMENT": "prod",
+  "APP_NAME": "My App",
+  "API_BASE_URL": "https://api.meuapp.com",
+  "DEBUG_MENU": false
+}

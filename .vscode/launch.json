@@ -1,0 +1,31 @@
+{   
+    "version": "0.2.0",
+    "configurations":[
+        
+        {
+            "name": "HML (debug)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor",
+                "hml",
+                "--dart-define-from-file",
+                "env/env_hml.json"
+            ]
+        },
+        {
+            "name": "PROD (debug)",
+            "request": "launch",
+            "type": "dart",
+            "program": "lib/main.dart",
+            "args": [
+                "--flavor",
+                "prod",
+                "--dart-define-from-file",
+                "env/env_prod.json"
+            ]
+        }
+    ]
+    
+}
