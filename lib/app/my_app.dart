@@ -11,13 +11,15 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: AppRuntime.flavor.isHml,
       home: Scaffold(
         appBar: AppBar(title: Text(AppConfig.appName)),
-        body: Padding(padding: EdgeInsetsGeometry.all(16),
-        child: Text(
+        body: Padding(
+          padding: EdgeInsetsGeometry.all(16),
+          child: Text(
             'Flavor: ${AppRuntime.flavor.name.toUpperCase()}\n'
             'Debug menu: ${AppConfig.debugMenu}\n'
             'ENV: ${AppConfig.environment}\n'
             'API: ${AppConfig.apiBaseUrl}',
-          ),),
+          ),
+        ),
       ),
     );
   }

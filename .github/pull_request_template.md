@@ -31,7 +31,7 @@ Marque uma opção com "x":
 
 - [ ] O código compila e os testes passam localmente
 - [ ] Adicionei testes automatizados relevantes
-- [ ] Este PR está apontando para a branch correta (`dev` ou `main`)
+- [ ] Este PR está apontando para a branch correta (`develop` ou `main`)
 - [ ] Nenhuma dependência desnecessária foi adicionada
 - [ ] A funcionalidade foi validada manualmente
 - [ ] A documentação foi atualizada (se necessário)
