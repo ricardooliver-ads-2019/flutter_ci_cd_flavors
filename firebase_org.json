@@ -1,0 +1,58 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "flutter-ci-cd-flavors-prod",
+                    "appId": "1:56792435510:android:848d050bc0d74ea91e0197",
+                    "fileOutput": "android/app/google-services.json"
+                },
+                "buildConfigurations": {
+                    "src/hml": {
+                        "projectId": "flutter-ci-cd-flavors-hml",
+                        "appId": "1:726671802955:android:227d8858c6300349bbc3ce",
+                        "fileOutput": "android/app/src/hml/google-services.json"
+                    }
+                }
+            },
+            "dart": {
+                "lib/firebase/firebase_options_hml.dart": {
+                    "projectId": "flutter-ci-cd-flavors-hml",
+                    "configurations": {
+                        "android": "1:726671802955:android:227d8858c6300349bbc3ce",
+                        "ios": "1:726671802955:ios:e50a97220f3cb800bbc3ce"
+                    }
+                },
+                "lib/firebase/firebase_options_prod.dart": {
+                    "projectId": "flutter-ci-cd-flavors-prod",
+                    "configurations": {
+                        "android": "1:56792435510:android:848d050bc0d74ea91e0197",
+                        "ios": "1:56792435510:ios:1056d93f5f8511521e0197"
+                    }
+                },
+                "lib/firebase_options.dart": {
+                    "projectId": "flutter-ci-cd-flavors-hml",
+                    "configurations": {
+                        "android": "1:726671802955:android:227d8858c6300349bbc3ce"
+                    }
+                }
+            },
+            "ios": {
+                "targets": {
+                    "Runner-HML": {
+                        "projectId": "flutter-ci-cd-flavors-hml",
+                        "appId": "1:726671802955:ios:e50a97220f3cb800bbc3ce",
+                        "uploadDebugSymbols": false,
+                        "fileOutput": "ios/Runner/hml/GoogleService-Info.plist"
+                    },
+                    "Runner-PROD": {
+                        "projectId": "flutter-ci-cd-flavors-prod",
+                        "appId": "1:56792435510:ios:1056d93f5f8511521e0197",
+                        "uploadDebugSymbols": false,
+                        "fileOutput": "ios/Runner/prod/GoogleService-Info.plist"
+                    }
+                }
+            }
+        }
+    }
+}

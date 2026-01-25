@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "56792435510",
+    "project_id": "flutter-ci-cd-flavors-prod",
+    "storage_bucket": "flutter-ci-cd-flavors-prod.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:56792435510:android:848d050bc0d74ea91e0197",
+        "android_client_info": {
+          "package_name": "com.example.flutter_ci_cd_flavors"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBj_2lxZoGwQDxxum9mquGkefvm710XR-4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
