@@ -1,47 +1,102 @@
-# 📦 Pull Request: Checklist de Entrega
+# 📦 Pull Request
 
-> Por favor, marque os itens abaixo antes de solicitar revisão.
-
-### 🧠 Descrição da funcionalidade ou correção
-<!-- Descreva o que foi feito neste PR -->
+> Marque os itens aplicáveis antes de solicitar review.  
+> **Regra:** PRs pequenos e claros são mais fáceis de revisar e dão menos regressão.
 
 ---
 
-## Plano de teste
-<!--- Descreva o plano para testar sua mudança-->
+## 🔗 Contexto / Issue
+<!-- Linke a tarefa/issue: Jira, Linear, GitHub Issue, Notion etc -->
+- Issue/Ticket: #
 
 ---
 
-## Tipo de mudanças
+## 🧠 O que mudou (resumo)
+<!-- 2–6 linhas: o que foi feito e por quê -->
+- 
+- 
 
+---
+
+## 🎯 Tipo de mudança
 Marque uma opção com "x":
 
 - [ ] ✨ Nova funcionalidade
 - [ ] 🛠️ Correção de bug
-- [ ] ❌ Breaking change (correção ou funcionalidade que modifica a funcionalidade existente)
-- [ ] 🧹 Refatoração de código
-- [ ] ✅ Mudança na configuração de compilação
+- [ ] ❌ Breaking change
+- [ ] 🧹 Refatoração (sem mudança de comportamento)
+- [ ] ✅ Build/CI/CD (pipelines, fastlane, flavors, configs)
 - [ ] 📝 Documentação
-- [ ] 🗑️ Chore
-- [ ] 📝 Outra (descreva):
+- [ ] 🗑️ Chore (manutenção)
+- [ ] 🚀 Release (develop → main)
 
 ---
 
-### ✅ Checklist
+## 🧪 Plano de teste
+<!-- Como validar? Seja objetivo. Se não testou, explique por quê. -->
+- [ ] Testei no Android (HML)
+- [ ] Testei no Android (PROD)
+- [ ] (Opcional) Testei no iOS (HML)
+- [ ] (Opcional) Testei no iOS (PROD)
 
-- [ ] O código compila e os testes passam localmente
-- [ ] Adicionei testes automatizados relevantes
-- [ ] Este PR está apontando para a branch correta (`develop` ou `main`)
+Passos:
+1. 
+2. 
+3. 
+
+---
+
+## ✅ Evidências / Validação
+<!-- Prints, vídeos, logs, link do Firebase App Distribution (se aplicável) -->
+- 
+
+---
+
+## ⚠️ Impacto e Risco
+<!-- Ajuda o reviewer a entender consequências -->
+- Impacto em performance: [ ] sim [ ] não (detalhar)
+- Mudanças em APIs/contratos: [ ] sim [ ] não
+- Mudanças em analytics/crashlytics: [ ] sim [ ] não
+- Mudanças que afetam login/pagamento/dados: [ ] sim [ ] não
+
+Risco geral:
+- [ ] baixo
+- [ ] médio
+- [ ] alto
+
+---
+
+## 🧰 Checklist geral (sempre)
+- [ ] O código compila localmente
+- [ ] Rodei `flutter analyze` (ou CI cobre)
+- [ ] Rodei `flutter test` (ou CI cobre)
+- [ ] `dart format` aplicado (ou CI cobre)
+- [ ] Não adicionei secrets no código/logs/prints
 - [ ] Nenhuma dependência desnecessária foi adicionada
-- [ ] A funcionalidade foi validada manualmente
-- [ ] A documentação foi atualizada (se necessário)
+- [ ] Documentação atualizada (se necessário)
+- [ ] Este PR aponta para a branch correta (`develop` ou `main`)
 
 ---
 
-### 🧪 Validação
-<!-- Inclua prints, logs ou explicação de como você testou -->
+# 🚀 Checklist de RELEASE (somente se for develop → main)
+> Esta seção é obrigatória para PR de release.
 
----
+## 📌 Versão (pubspec.yaml é a fonte da verdade)
+- [ ] Atualizei o `versionName (X.Y.Z)` no `pubspec.yaml`
+- [ ] Mantive o `buildNumber (+N)` (o beta incrementa automaticamente)
+- [ ] A versão final ficou exatamente:  
+  `version: ____.___.___+____`
 
-### 📌 Observações adicionais
-<!-- Algum ponto de atenção a destacar?, decisão de arquitetura, etc -->
+## 🏷️ Tag e Deploy
+- [ ] Entendo que a tag será criada automaticamente a partir do `pubspec.yaml` (ex.: `vX.Y.Z`)
+- [ ] Entendo que **se a tag já existir**, a pipeline falhará (proteção anti-tag repetida)
+- [ ] O deploy de produção será disparado por `push` da tag `v*`
+
+## ✅ Pronto para produção
+- [ ] HML/QA aprovado (release está validado)
+- [ ] Sem pendências críticas na `develop`
+- [ ] Se necessário, changelog/release notes preparados
+
+## 🔙 Rollback (plano de reversão)
+<!-- Em empresa isso é obrigatório: como desfaz se der ruim? -->
+- Plano: Reverter o PR na `main` e criar um novo release com nova versão/tag

@@ -57,6 +57,11 @@ firebase-adminsdk*.json
 **/*.jks
 **/*.keystore
 android/key.properties
+**/android/app/keystore/*.jks
+**/android/app/*.keystore
+
+# Also ignore common typo
+android/key.proprties
 
 # iOS signing
 **/*.p12

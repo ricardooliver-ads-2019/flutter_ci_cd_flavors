@@ -15,24 +15,72 @@
 
 default_platform(:android)
 
+def bump_flutter_build_number!(pubspec_path)
+  content = File.read(pubspec_path)
+
+  line = content.lines.find { |l| l.start_with?("version:") }
+  UI.user_error!("pubspec.yaml missing 'version:' line") if line.nil?
+
+  full = line.split(":")[1].strip # "1.2.0+57"
+  name, build = full.split("+")
+  UI.user_error!("Invalid version format. Expected X.Y.Z+N") if build.nil?
+
+  new_build = build.to_i + 1
+  new_line = "version: #{name}+#{new_build}\n"
+
+  updated = content.sub(line, new_line)
+  File.write(pubspec_path, updated)
+
+  return name, build.to_i, new_build
+end
+
+
 platform :android do
-  desc "Runs all the tests"
-  lane :test do
-    gradle(task: "test")
-  end
-
-  desc "Submit a new Beta Build to Crashlytics Beta"
+  desc "Homologação (HML) - envia APK para Firebase App Distribution (grupo beta)"
   lane :beta do
-    gradle(task: "clean assembleRelease")
-    crashlytics
-  
-    # sh "your_script.sh"
-    # You can also use other beta testing services here
+    UI.message("Beta (HML): Incrementar versionNumber, envia APK para Firebase App Distribution, commit novo versionNumber na develop")
+
+    pubspec_path = "../../pubspec.yaml"
+    version_name, old_build, new_build = bump_flutter_build_number!(pubspec_path)
+
+    UI.success("📦 pubspec: #{version_name}+#{old_build} → #{version_name}+#{new_build}")
+
+    sh("cd .. && flutter pub get")
+    sh("cd .. && flutter build apk --release --flavor hml --dart-define-from-file env/env_hml.json")
+
+    apk_path = "../build/app/outputs/flutter-apk/app-hml-release.apk"
+
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID_ANDROID_HML"],
+      firebase_cli_token: ENV["FIREBASE_TOKEN"],
+      groups: "beta",
+      apk_path: apk_path,
+      release_notes: "HML build #{version_name}+#{new_build}"
+    )
+
+    sh("git add #{pubspec_path}")
+    sh("git commit -m \"chore(beta): bump build to N #{new_build} [skip ci]\"")
+    sh("git push origin develop")
+
+    UI.success("✅ APK enviado para Firebase App Distribution (grupo beta) e versionNumber incrementado na develop")
   end
 
-  desc "Deploy a new version to the Google Play"
-  lane :deploy do
-    gradle(task: "clean assembleRelease")
-    upload_to_play_store
+  desc "Produção (PROD) - envia APK para Firebase App Distribution (grupo prod)"
+  lane :prod do
+    apk_path = "../build/app/outputs/flutter-apk/app-prod-release.apk"
+  
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID_ANDROID_PROD"],
+      firebase_cli_token: ENV["FIREBASE_TOKEN"],
+      groups: "prod",
+      apk_path: apk_path,
+      release_notes: "Build automática (PROD)"
+    )
   end
+
+  # desc "Deploy a new version to the Google Play"
+  # lane :deploy do
+  #   gradle(task: "clean assembleRelease")
+  #   upload_to_play_store
+  # end
 end
