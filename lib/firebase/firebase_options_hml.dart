@@ -65,5 +65,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'flutter-ci-cd-flavors-hml.firebasestorage.app',
     iosBundleId: 'com.example.flutterCiCdFlavors.app',
   );
-
 }

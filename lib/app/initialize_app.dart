@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_ci_cd_flavors/app/core/config/app_flavor.dart';
 import 'package:flutter_ci_cd_flavors/app/core/config/app_runtime.dart';
 import 'package:flutter_ci_cd_flavors/app/my_app.dart';
-import 'package:flutter_ci_cd_flavors/firebase/firebase_options_hml.dart' as firebase_hml;
-import 'package:flutter_ci_cd_flavors/firebase/firebase_options_prod.dart' as firebase_prod;
+import 'package:flutter_ci_cd_flavors/firebase/firebase_options_hml.dart'
+    as firebase_hml;
+import 'package:flutter_ci_cd_flavors/firebase/firebase_options_prod.dart'
+    as firebase_prod;
 
 Future<void> initializeApp(AppFlavor flavor) async {
   AppRuntime.flavor = flavor;
