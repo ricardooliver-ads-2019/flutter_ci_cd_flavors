@@ -58,11 +58,8 @@ platform :android do
       release_notes: "HML build #{version_name}+#{new_build}"
     )
 
-    sh("git add #{pubspec_path}")
-    sh("git commit -m \"chore(beta): bump build to N #{new_build} [skip ci]\"")
-    sh("git push origin develop")
+    UI.message("Beta (HML): Incrementa buildNumber no pubspec.yaml, gera APK e envia para Firebase App Distribution")
 
-    UI.success("✅ APK enviado para Firebase App Distribution (grupo beta) e versionNumber incrementado na develop")
   end
 
   desc "Produção (PROD) - envia APK para Firebase App Distribution (grupo prod)"
