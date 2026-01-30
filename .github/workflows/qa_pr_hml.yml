@@ -38,9 +38,6 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      # Se você assina builds de QA (recomendado), mantém isso.
-      # Se não quiser assinar QA, dá pra remover e buildar debug,
-      # mas na prática QA geralmente testa release assinado.
       - name: Decode keystore
         run: |
           mkdir -p android/app/keystore
@@ -57,9 +54,10 @@ jobs:
 
       - name: Build APK (HML)
         run: |
+            BUILD_NUMBER=$(( ${{ github.event.pull_request.number }} * 100 + ${{ github.run_number }} ))
             flutter build apk --release --flavor hml \
             --dart-define-from-file env/env_hml.json \
-            --build-number $GITHUB_RUN_NUMBER
+            --build-number $BUILD_NUMBER
 
       - name: Setup Ruby + Bundler
         uses: ruby/setup-ruby@v1
