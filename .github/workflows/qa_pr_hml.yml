@@ -1,0 +1,77 @@
+name: qa_pr_hml
+
+on:
+  pull_request:
+    branches: [develop]
+    types: [opened, reopened, synchronize, labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: qa-pr-hml-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  android_hml_qa:
+    name: PR → HML → Firebase (QA)
+    runs-on: ubuntu-latest
+
+    if: |
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      contains(github.event.pull_request.labels.*.name, 'qa-ready') &&
+      github.event.pull_request.draft == false
+
+    steps:
+      - name: Checkout PR HEAD
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Decode keystore
+        run: |
+          mkdir -p android/app/keystore
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/keystore/upload-keystore.jks
+
+      - name: Create key.properties
+        run: |
+          cat > android/key.properties <<EOF
+          storeFile=keystore/upload-keystore.jks
+          storePassword=${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.ANDROID_KEY_PASSWORD }}
+          keyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
+          EOF
+
+      - name: Build APK (HML)
+        run: |
+            BUILD_NUMBER=$(( ${{ github.event.pull_request.number }} * 100 + ${{ github.run_number }} ))
+            flutter build apk --release --flavor hml \
+            --dart-define-from-file env/env_hml.json \
+            --build-number $BUILD_NUMBER
+
+      - name: Setup Ruby + Bundler
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+          working-directory: android
+
+      - name: Distribute to Firebase App Distribution (QA)
+        working-directory: android
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          FIREBASE_APP_ID_ANDROID_HML: ${{ secrets.FIREBASE_APP_ID_ANDROID_HML }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_SHA: ${{ github.event.pull_request.head.sha }}
+        run: bundle exec fastlane android qa_pr
