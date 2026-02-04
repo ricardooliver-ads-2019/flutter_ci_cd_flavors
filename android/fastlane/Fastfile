@@ -1,0 +1,97 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+def bump_flutter_build_number!(pubspec_path)
+  content = File.read(pubspec_path)
+
+  line = content.lines.find { |l| l.start_with?("version:") }
+  UI.user_error!("pubspec.yaml missing 'version:' line") if line.nil?
+
+  full = line.split(":")[1].strip # "1.2.0+57"
+  name, build = full.split("+")
+  UI.user_error!("Invalid version format. Expected X.Y.Z+N") if build.nil?
+
+  new_build = build.to_i + 1
+  new_line = "version: #{name}+#{new_build}\n"
+
+  updated = content.sub(line, new_line)
+  File.write(pubspec_path, updated)
+
+  return name, build.to_i, new_build
+end
+
+
+platform :android do
+  desc "Homologação (HML) - envia APK para Firebase App Distribution (grupo beta)"
+  lane :beta do
+    UI.message("Beta (HML): Incrementar versionNumber, envia APK para Firebase App Distribution, commit novo versionNumber na develop")
+
+    pubspec_path = "../../pubspec.yaml"
+    version_name, old_build, new_build = bump_flutter_build_number!(pubspec_path)
+
+    UI.success("📦 pubspec: #{version_name}+#{old_build} → #{version_name}+#{new_build}")
+
+    sh("cd .. && flutter pub get")
+    sh("cd .. && flutter build apk --release --flavor hml --dart-define-from-file env/env_hml.json")
+
+    apk_path = "../build/app/outputs/flutter-apk/app-hml-release.apk"
+
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID_ANDROID_HML"],
+      firebase_cli_token: ENV["FIREBASE_TOKEN"],
+      groups: "beta",
+      apk_path: apk_path,
+      release_notes: "HML build #{version_name}+#{new_build}"
+    )
+
+    UI.message("Beta (HML): Incrementa buildNumber no pubspec.yaml, gera APK e envia para Firebase App Distribution")
+
+  end
+
+  desc "Produção (PROD) - envia APK para Firebase App Distribution (grupo prod)"
+  lane :prod do
+    apk_path = "../build/app/outputs/flutter-apk/app-prod-release.apk"
+  
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID_ANDROID_PROD"],
+      firebase_cli_token: ENV["FIREBASE_TOKEN"],
+      groups: "prod",
+      apk_path: apk_path,
+      release_notes: "Build automática (PROD)"
+    )
+  end
+
+  desc "PR QA (HML) - build já gerado pela pipeline, só distribui no Firebase (grupo qa)"
+  lane :qa_pr do
+    apk_path = "../build/app/outputs/flutter-apk/app-hml-release.apk"
+
+    release_notes = <<~NOTES
+      PR ##{ENV['PR_NUMBER']}
+      #{ENV['PR_TITLE']}
+      SHA: #{ENV['PR_SHA']&.slice(0,7)}
+    NOTES
+
+    firebase_app_distribution(
+      app: ENV["FIREBASE_APP_ID_ANDROID_HML"],
+      firebase_cli_token: ENV["FIREBASE_TOKEN"],
+      groups: "qa",
+      apk_path: apk_path,
+      release_notes: release_notes
+    )
+  end
+  
+end

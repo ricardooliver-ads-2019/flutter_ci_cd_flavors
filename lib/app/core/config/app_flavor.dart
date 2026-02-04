@@ -1,15 +1,15 @@
 enum AppFlavor {
-  hlm,
+  hml,
   prod;
 
-  bool get isHml => this == AppFlavor.hlm;
+  bool get isHml => this == AppFlavor.hml;
   bool get isProd => this == AppFlavor.prod;
 
   static AppFlavor fromString(String flavor) {
     return switch (flavor.trim().toLowerCase()) {
-      'hlm' => AppFlavor.hlm,
+      'hml' => AppFlavor.hml,
       'prod' => AppFlavor.prod,
-      _ => AppFlavor.hlm,
+      _ => AppFlavor.hml,
     };
   }
 }

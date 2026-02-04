@@ -43,3 +43,26 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Env
+.env
+.env.*
+*.env
+
+# Firebase Admin / service accounts
+*service-account*.json
+firebase-adminsdk*.json
+
+# Android signing
+**/*.jks
+**/*.keystore
+android/key.properties
+**/android/app/keystore/*.jks
+**/android/app/*.keystore
+
+# Also ignore common typo
+android/key.proprties
+
+# iOS signing
+**/*.p12
+**/*.mobileprovision

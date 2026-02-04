@@ -1,0 +1,74 @@
+name: tag_from_pubspec
+
+on:
+  pull_request:
+    branches: [main]
+    types: [closed]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tag_from_pubspec
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    if: >
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 1) Ler versão do pubspec.yaml (X.Y.Z+N)
+      # 2) Extrair apenas X.Y.Z
+      # 3) Montar tag vX.Y.Z
+      - name: Read version from pubspec.yaml
+        id: ver
+        run: |
+          LINE=$(grep "^version:" pubspec.yaml | head -n 1)
+          if [ -z "$LINE" ]; then
+            echo "❌ pubspec.yaml missing 'version:' line"
+            exit 1
+          fi
+
+          FULL=$(echo "$LINE" | awk '{print $2}')   # ex: 1.2.0+58
+          NAME=${FULL%%+*}                          # ex: 1.2.0
+
+          # valida formato básico X.Y.Z
+          if ! echo "$NAME" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "❌ Invalid versionName '$NAME'. Expected X.Y.Z in pubspec.yaml"
+            exit 1
+          fi
+
+          TAG="v$NAME"
+
+          echo "full=$FULL" >> $GITHUB_OUTPUT
+          echo "name=$NAME" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+
+          echo "✅ pubspec version: $FULL"
+          echo "✅ tag to create: $TAG"
+
+      # Proteção anti-tag repetida
+      # Em projeto real, release repetido é ERRO (não é "skip")
+      - name: Fail if tag already exists
+        run: |
+          TAG="${{ steps.ver.outputs.tag }}"
+          git fetch --tags
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "❌ Tag $TAG already exists."
+            echo "➡️ Fix: bump pubspec.yaml versionName (X.Y.Z) before merging into main."
+            exit 1
+          fi
+
+      # Criar e subir tag
+      - name: Create and push tag
+        run: |
+          TAG="${{ steps.ver.outputs.tag }}"
+          git tag "$TAG"
+          git push origin "$TAG"
